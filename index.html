@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y Chat - Direct Messaging & Social Experience</title>
+    <!-- Premium Fonts and Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <div class="brand">
+                    <div class="brand-logo">Y</div>
+                    <span class="brand-name">y chat</span>
+                </div>
+                
+                <nav class="nav-links">
+                    <div class="nav-item active" onclick="switchTab('feed')" id="nav-feed">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home Feed</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('chat')" id="nav-chat">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Direct Chat</span>
+                        <span class="badge" id="dm-total-badge" style="display: none;">3</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('explore')" id="nav-explore">
+                        <i class="fa-solid fa-compass"></i>
+                        <span>Explore</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('notifications')" id="nav-notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="badge" id="notif-badge" style="display: none;">2</span>
+                    </div>
+                    <div class="nav-item" onclick="switchTab('profile')" id="nav-profile">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Profile</span>
+                    </div>
+                </nav>
+            </div>
+            
+            <!-- Switch Active Profile Footer -->
+            <div class="current-user-card" onclick="openModal('switch-user-modal')" title="Switch active profile persona">
+                <div class="avatar-wrapper">
+                    <img src="" alt="Avatar" class="avatar" id="sidebar-user-avatar">
+                    <div class="status-indicator"></div>
+                </div>
+                <div class="user-info">
+                    <span class="user-display-name" id="sidebar-user-dname">Loading...</span>
+                    <span class="user-handle" id="sidebar-user-handle">@loading</span>
+                </div>
+                <i class="fa-solid fa-right-left switch-icon"></i>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- 1. HOME SOCIAL FEED SECTION -->
+            <section id="feed-section" class="content-section active">
+                <div class="home-layout">
+                    <!-- Feed Column -->
+                    <div class="feed-column">
+                        <!-- Dynamic Stories Carousel -->
+                        <div class="stories-container" id="stories-carousel">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+
+                        <!-- Post Composer -->
+                        <div class="composer">
+                            <div class="composer-header">
+                                <img src="" alt="Avatar" class="avatar" id="composer-user-avatar">
+                                <textarea class="composer-textarea" id="composer-input" placeholder="Share something new on Y Chat..."></textarea>
+                            </div>
+                            
+                            <!-- Selected attachment preview -->
+                            <div class="composer-preview-container" id="composer-preview-container">
+                                <img src="" alt="Post attachment preview" class="composer-preview-img" id="composer-preview-img">
+                                <button class="composer-preview-cancel" onclick="clearComposerAttachment()">&times;</button>
+                            </div>
+                            
+                            <!-- Attachment Type Selectors -->
+                            <div class="image-selection-grid" id="composer-image-options">
+                                <!-- Populated dynamically with beautiful abstract post images -->
+                            </div>
+
+                            <div class="composer-actions">
+                                <div class="composer-tools">
+                                    <button class="composer-tool-btn" onclick="toggleComposerAttachmentGrid()" title="Attach beautiful visual image">
+                                        <i class="fa-solid fa-image"></i>
+                                    </button>
+                                    <button class="composer-tool-btn" onclick="addTextEmoji()" title="Insert mood emoji">
+                                        <i class="fa-solid fa-face-smile"></i>
+                                    </button>
+                                </div>
+                                <button class="composer-submit" onclick="submitPost()">Post Feed</button>
+                            </div>
+                        </div>
+
+                        <!-- Feed Cards List -->
+                        <div class="posts-feed" id="feed-posts-list">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Right Suggestions Sidebar -->
+                    <div class="right-sidebar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                            <input type="text" class="search-input" id="right-sidebar-search" placeholder="Search people or tags..." oninput="handleSearch(this.value)">
+                        </div>
+
+                        <div class="sidebar-panel">
+                            <h3 class="panel-title">Who to Follow</h3>
+                            <div class="suggestions-list" id="sidebar-suggestions">
+                                <!-- Populated dynamically via app.js -->
+                            </div>
+                        </div>
+
+                        <div class="sidebar-panel">
+                            <h3 class="panel-title">Trending Hashtags</h3>
+                            <ul class="nav-links" style="gap: 12px; font-size: 0.85rem;">
+                                <li style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                                    <span>#YChatExperience</span><strong style="color: var(--accent-secondary);">1.2k posts</strong>
+                                </li>
+                                <li style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                                    <span>#Glassmorphism</span><strong style="color: var(--accent-secondary);">942 posts</strong>
+                                </li>
+                                <li style="display: flex; justify-content: space-between; color: var(--text-secondary);">
+                                    <span>#DirectMessaging</span><strong style="color: var(--accent-secondary);">812 posts</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. DIRECT CHAT SECTION -->
+            <section id="chat-section" class="content-section">
+                <div class="chat-section">
+                    <!-- Left chat users list -->
+                    <div class="chat-list-panel">
+                        <div class="chat-list-header">
+                            <h3 class="chat-list-title">Direct Messages</h3>
+                            <div class="chat-search-wrapper">
+                                <i class="fa-solid fa-magnifying-glass chat-search-icon"></i>
+                                <input type="text" class="chat-search-input" id="chat-list-search" placeholder="Search chat contacts..." oninput="filterChatList(this.value)">
+                            </div>
+                        </div>
+                        <div class="chat-threads-container" id="chat-threads-list">
+                            <!-- Populated dynamically via app.js -->
+                        </div>
+                    </div>
+
+                    <!-- Right chat details container -->
+                    <div class="chat-window" id="chat-active-window">
+                        <!-- Default placeholder -->
+                        <div class="chat-window-placeholder" id="chat-placeholder">
+                            <i class="fa-solid fa-paper-plane chat-placeholder-icon"></i>
+                            <h2>Your Inbox</h2>
+                            <p style="font-size: 0.85rem; margin-top: 5px;">Select a thread on the left, or use profile switcher to message between accounts!</p>
+                        </div>
+                        
+                        <!-- Chat Conversation View (Hidden by default until clicked) -->
+                        <div id="chat-active-box" style="display: none; flex: 1; flex-direction: column; height: 100%;">
+                            <div class="chat-window-header">
+                                <div class="chat-header-user">
+                                    <img src="" alt="Active Chat Avatar" class="avatar" id="chat-header-avatar" style="width: 38px; height: 38px;">
+                                    <div>
+                                        <div class="chat-header-name" id="chat-header-dname">Active Contact</div>
+                                        <div class="chat-header-status" id="chat-header-status-lbl">Online</div>
+                                    </div>
+                                </div>
+                                <div class="chat-header-actions">
+                                    <i class="fa-solid fa-phone chat-header-action-btn" title="Simulated audio call"></i>
+                                    <i class="fa-solid fa-video chat-header-action-btn" title="Simulated video call"></i>
+                                    <i class="fa-solid fa-ellipsis-vertical chat-header-action-btn" title="Actions"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Dynamic Message bubbles container -->
+                            <div class="chat-messages-area" id="chat-messages-container">
+                                <!-- Filled by app.js -->
+                            </div>
+                            
+                            <!-- Active message attachments selector preview -->
+                            <div class="chat-attachment-preview-panel" id="chat-attachment-preview">
+                                <div class="chat-attachment-preview-details">
+                                    <img src="" class="chat-attachment-preview-thumb" id="chat-attachment-thumb" style="display: none;">
+                                    <div class="file-icon-box" id="chat-attachment-icon-box" style="display: none; width: 30px; height: 30px; font-size: 0.9rem;">
+                                        <i class="fa-solid fa-file"></i>
+                                    </div>
+                                    <span class="chat-attachment-preview-text" id="chat-attachment-filename">Attachment.jpg</span>
+                                </div>
+                                <button class="chat-attachment-preview-cancel" onclick="clearChatAttachment()">&times;</button>
+                            </div>
+
+                            <!-- Chat Input Box -->
+                            <div class="chat-input-bar">
+                                <div class="chat-input-row">
+                                    <!-- Attachment Dropdown button -->
+                                    <div class="attachment-dropdown">
+                                        <button class="chat-action-btn-circle" onclick="toggleAttachmentMenu()" id="chat-attachment-trigger" title="Attach Photos, Files or Audios">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+                                        <div class="attachment-dropdown-content" id="chat-attachment-menu">
+                                            <div class="attachment-dropdown-item" onclick="selectChatAttachment('photo')">
+                                                <i class="fa-solid fa-image"></i>
+                                                <span>Send Photo</span>
+                                            </div>
+                                            <div class="attachment-dropdown-item" onclick="selectChatAttachment('file')">
+                                                <i class="fa-solid fa-file-pdf"></i>
+                                                <span>Send PDF File</span>
+                                            </div>
+                                            <div class="attachment-dropdown-item" onclick="selectChatAttachment('audio')">
+                                                <i class="fa-solid fa-microphone"></i>
+                                                <span>Send Voice Note</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <input type="text" class="chat-composer-input" id="chat-input-box" placeholder="Write a message, share photos or files..." onkeypress="handleChatEnter(event)">
+                                    
+                                    <button class="chat-send-btn" onclick="submitChatMessage()">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. EXPLORE/PEOPLE DIRECTORY SECTION -->
+            <section id="explore-section" class="content-section">
+                <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;">Explore Community</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Find creative minds, follow them, and start exchanging photos, files, and voice notes!</p>
+                
+                <div class="search-box" style="margin-bottom: 2rem; max-width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                    <input type="text" class="search-input" id="explore-search" placeholder="Type name, handle or skill to search..." oninput="renderExploreGrid(this.value)">
+                </div>
+
+                <div class="explore-grid" id="explore-cards-container">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </section>
+
+            <!-- 4. NOTIFICATIONS SECTION -->
+            <section id="notifications-section" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <div>
+                        <h2 style="font-size: 1.6rem; font-weight: 800;">Notifications</h2>
+                        <p style="color: var(--text-secondary); margin-top: 4px;">Updates on your likes, comments, DMs and new followers</p>
+                    </div>
+                    <button class="follow-btn" onclick="clearAllNotifications()" style="font-size: 0.75rem;">Clear All</button>
+                </div>
+                
+                <div class="notifications-list" id="notifications-container">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </section>
+
+            <!-- 5. PROFILE ACCOUNT VIEW -->
+            <section id="profile-section" class="content-section">
+                <!-- User Profile Header -->
+                <div class="profile-header-card">
+                    <div class="profile-banner"></div>
+                    <div class="profile-meta-row">
+                        <div class="profile-top-info">
+                            <img src="" alt="User profile large avatar" class="profile-avatar-large" id="profile-view-avatar">
+                            <button class="profile-action-btn" onclick="openModal('custom-profile-modal')">Create New Profile</button>
+                        </div>
+                        
+                        <div class="profile-details">
+                            <h2 id="profile-view-dname">Name Display</h2>
+                            <p id="profile-view-handle">@username</p>
+                            <p class="profile-bio" id="profile-view-bio">This is where the user description displays.</p>
+                        </div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number" id="profile-stat-posts">0</span>
+                                <span class="stat-label">Posts</span>
+                            </div>
+                            <div class="stat-item" style="cursor: pointer;" onclick="openFollowersList()" title="View followers list">
+                                <span class="stat-number" id="profile-stat-followers">0</span>
+                                <span class="stat-label">Followers</span>
+                            </div>
+                            <div class="stat-item" style="cursor: pointer;" onclick="openFollowingList()" title="View following list">
+                                <span class="stat-number" id="profile-stat-following">0</span>
+                                <span class="stat-label">Following</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile tab items -->
+                <div class="profile-tabs">
+                    <div class="profile-tab active" onclick="switchProfileTab('posts')" id="profile-tab-posts">My Posts</div>
+                    <div class="profile-tab" onclick="switchProfileTab('likes')" id="profile-tab-likes">Likes</div>
+                </div>
+
+                <!-- Profile Tab contents -->
+                <div class="posts-feed" id="profile-tab-posts-container">
+                    <!-- Loaded dynamically via app.js -->
+                </div>
+                <div class="posts-feed" id="profile-tab-likes-container" style="display: none;">
+                    <!-- Loaded dynamically via app.js -->
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL 1: SWITCH PROFILE SWITCHER -->
+    <div class="modal-overlay" id="switch-user-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Switch Active Profile</h3>
+                <button class="modal-close-btn" onclick="closeModal('switch-user-modal')">&times;</button>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.2rem; line-height: 1.4;">
+                Change your active profile below to simulate how another user sees the feed, receives your real-time chats, and updates follow counters!
+            </p>
+            <div class="modal-users-list" id="modal-profile-list">
+                <!-- User items dynamically rendered via app.js -->
+            </div>
+            
+            <button class="form-btn" onclick="closeModal('switch-user-modal'); setTimeout(() => openModal('custom-profile-modal'), 200)" style="margin-top: 1.5rem; background: transparent; border: 1px solid var(--border-color); color: white;">
+                + Create Custom Persona
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CREATE CUSTOM PROFILE -->
+    <div class="modal-overlay" id="custom-profile-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Custom Persona</h3>
+                <button class="modal-close-btn" onclick="closeModal('custom-profile-modal')">&times;</button>
+            </div>
+            
+            <form id="new-profile-form" onsubmit="handleCreateProfileSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="profile-username">Username (Handle)</label>
+                    <input type="text" class="form-input" id="profile-username" placeholder="e.g. sam_dev" required pattern="^[a-zA-Z0-9_]{3,15}$" title="3-15 chars, alphanumeric or underscores">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profile-dname">Display Name</label>
+                    <input type="text" class="form-input" id="profile-dname" placeholder="e.g. Samuel Dev" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profile-bio">Bio</label>
+                    <input type="text" class="form-input" id="profile-bio" placeholder="e.g. Coding beautiful experiences & designs." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="profile-avatar-select">Choose Avatar Theme</label>
+                    <select class="form-input" id="profile-avatar-select" style="background: rgba(17,18,27,0.95);">
+                        <option value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80">Creative Artist (Female)</option>
+                        <option value="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80">Tech Enthusiast (Male)</option>
+                        <option value="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80">UI/UX Designer (Female)</option>
+                        <option value="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80">Product Manager (Male)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="form-btn">Build Persona</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Entrypoint -->
+    <script src="app.js"></script>
+</body>
+</html>
